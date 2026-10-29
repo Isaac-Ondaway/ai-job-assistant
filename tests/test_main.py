@@ -49,3 +49,55 @@ def test_skills_with_empty_requirements():
         "missing_skills": [],
         "match_percentage": 0.0
     }
+
+def test_skills_with_case_insensitive_matching():
+    payload = {
+        "required_skills": ["python", "sql", "Git"],
+        "candidate_skills": ["Python", "SQL"]
+    }
+
+    response = client.post("/skills", json=payload)
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "missing_skills": ["Git"],
+        "match_percentage": 66.67
+    }
+
+def test_skills_with_duplicate_candidate_skills():
+    payload = {
+        "required_skills": ["Python", "SQL"],
+        "candidate_skills": ["Python", "Python", "SQL"]
+    }
+
+    response = client.post("/skills", json=payload)
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "missing_skills": [],
+        "match_percentage": 100.0
+    }
+
+def test_skills_with_no_matching_skills():
+    payload = {
+        "required_skills": ["Python", "SQL"],
+        "candidate_skills": ["Java", "C++"]
+    }
+
+    response = client.post("/skills", json=payload)
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "missing_skills": ["Python", "SQL"],
+        "match_percentage": 0.0
+    }
+
+def test_skills_with_empty_and_whitespace_skills():
+    payload = {
+        "required_skills": ["Python", "  ", ""],
+        "candidate_skills": ["Python", "SQL"]
+    }
+
+    response = client.post("/skills", json=payload)
+
+    assert response.status_code == 422

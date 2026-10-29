@@ -4,8 +4,10 @@ def find_missing_skills(
 ) -> list[str]:
     missing = []
 
+    candidate_skills_lower = {s.lower() for s in candidate_skills}
+
     for skill in required_skills:
-        if skill not in candidate_skills:
+        if skill.lower() not in candidate_skills_lower:
             missing.append(skill)
 
     return missing
@@ -18,8 +20,10 @@ def calculate_match_percentage(
     total_required_skill = len(required_skills)
     cand_skill_match = 0
 
+    candidate_skills_lower = {s.lower() for s in candidate_skills}
+
     for skill in required_skills:
-        if skill in candidate_skills:
+        if skill.lower() in candidate_skills_lower:
             cand_skill_match += 1
 
     if total_required_skill > 0:
